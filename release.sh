@@ -1,15 +1,16 @@
 #!/bin/bash
-# calls `./install.sh`, `./build.sh` and then uploads the result to pypi.org
+# usage: `./release.sh [<live|...>]`
+# calls `./build.sh` and uploads the result to `test.pypi.org` or `pypi.org`
 # expected flow is `develop` -> `approved` -> `master` -> release
-set -e
+set -eu
 
-index="test" # todo: vs ..? make a param
+index=${1:-"test"}
 
-pypi_repository="pypi"
-pypi_url="https://pypi.org/pypi"
-if [ "$index" = "test" ]; then
-    pypi_repository="testpypi"
-    pypi_url="https://test.pypi.org/pypi"
+pypi_repository="testpypi"
+pypi_url="https://test.pypi.org/pypi"
+if [ "$index" = "live" ]; then
+    pypi_repository="pypi"
+    pypi_url="https://pypi.org/pypi"
 fi
 
 # avoid setting this on the command line, it will be visible in your history.
