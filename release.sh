@@ -3,6 +3,9 @@
 # expected flow is `develop` -> `approved` -> `master` -> release
 set -e
 
+# TODO: check the version to be released with the versions available on the selected pypi repository
+pypi_repository="testpypi"
+
 # avoid setting this on the command line, it will be visible in your history.
 token="$TWINE_PASSWORD"
 if [ -z "$token" ]; then
@@ -18,23 +21,20 @@ if [ "$branch_name" != "master" ]; then
     read
 fi
 
-echo "--- installing"
-./install.sh
-
 echo "--- building"
 ./build.sh
 
 source venv/bin/activate
 
 # better than nothing.
-echo "--- testing"
+echo "--- testing build"
 python3 -m twine check \
     --strict \
     dist/*
 
 echo "--- uploading"
 python3 -m twine upload \
-    --repository testpypi \
+    --repository "$pypi_repository" \
     --username "__token__" \
     --password "$token" \
     dist/*
