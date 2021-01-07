@@ -3,7 +3,6 @@
 # expected flow is `develop` -> `approved` -> `master` -> release
 set -e
 
-# TODO: check the version to be released with the versions available on the selected pypi repository
 pypi_repository="testpypi"
 
 # avoid setting this on the command line, it will be visible in your history.
@@ -23,8 +22,9 @@ fi
 
 echo "--- building"
 ./build.sh
-
 source venv/bin/activate
+
+# TODO: check the version to be released with the versions available on the selected pypi repository
 
 # better than nothing.
 echo "--- testing build"
