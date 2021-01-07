@@ -3,7 +3,14 @@
 # expected flow is `develop` -> `approved` -> `master` -> release
 set -e
 
-pypi_repository="testpypi"
+index="test" # todo: vs ..? make a param
+
+pypi_repository="pypi"
+pypi_url="https://pypi.org/pypi"
+if [ "$index" = "test" ]; then
+    pypi_repository="testpypi"
+    pypi_url="https://test.pypi.org/pypi"
+fi
 
 # avoid setting this on the command line, it will be visible in your history.
 token="$TWINE_PASSWORD"
@@ -17,20 +24,31 @@ branch_name=$(git branch --show-current)
 if [ "$branch_name" != "master" ]; then
     echo "This is *not* the 'master' branch. Releases should happen from 'master' and not '$branch_name'."
     echo "ctrl-c to quit, any key to continue."
-    read
+    # failure to read input within timeout causes script to exit with error code 142 rather than wait indefinitely
+    timeout=10 # seconds
+    read -t $timeout
 fi
 
 echo "--- building"
 ./build.sh
 source venv/bin/activate
 
-# TODO: check the version to be released with the versions available on the selected pypi repository
-
-# better than nothing.
 echo "--- testing build"
 python3 -m twine check \
     --strict \
     dist/*
+
+echo "--- checking against remote release"
+local_version=$(python3 setup.py --version)
+local_version="($local_version)" # hack
+
+package_name=$(python3 setup.py --name)
+# "elife-dummy-python-release-project (0.0.1)                      - A small example package"  =>  "(0.0.1)"
+remote_version=$(pip search "$package_name" --index "$pypi_url" --isolated | grep "$package_name" | awk '{ print $2 }')
+if [ "$local_version" = "$remote_version" ]; then
+    echo "Local version $local_version is the same as the remote version $remote_version. Not releasing."
+    exit 0 # not a failure case
+fi
 
 echo "--- uploading"
 python3 -m twine upload \
