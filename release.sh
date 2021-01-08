@@ -1,6 +1,6 @@
 #!/bin/bash
 # usage: `./release.sh [<live|...>]`
-# calls `./build.sh` and uploads the result to `test.pypi.org` or `pypi.org`
+# calls `setup.py` to build distributables and uploads the result to `test.pypi.org` or `pypi.org`
 # expected flow is `develop` -> `approved` -> `master` -> release
 set -eu
 
@@ -31,8 +31,11 @@ if [ "$branch_name" != "master" ]; then
 fi
 
 echo "--- building"
-./build.sh
-source venv/bin/activate
+rm -rf ./release-venv/ dist/ build/ *.egg-info
+python3 -m venv release-venv
+source release-venv/bin/activate
+python3 -m pip install --upgrade pip setuptools wheel twine
+python3 setup.py sdist bdist_wheel
 
 echo "--- testing build"
 python3 -m twine check \
