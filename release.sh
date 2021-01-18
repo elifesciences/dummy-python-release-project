@@ -21,15 +21,16 @@ if [ -z "$token" ]; then
 fi
 
 # check we are on the `master` branch.
+# disabled: Jenkins checkouts out a revision and not a branch. we're not going to get a branch name.
 # branch_name=$(git branch --show-current) # git 2.22+
-branch_name=$(git rev-parse --abbrev-ref HEAD)
-if [ "$branch_name" != "master" ]; then
-    echo "This is *not* the 'master' branch. Releases should happen from 'master' and not '$branch_name'."
-    echo "ctrl-c to quit, any key to continue."
-    # failure to read input within timeout causes script to exit with error code 142 rather than wait indefinitely
-    timeout=10 # seconds
-    read -t $timeout
-fi
+#branch_name=$(git rev-parse --abbrev-ref HEAD)
+#if [ "$branch_name" != "master" ]; then
+#    echo "This is *not* the 'master' branch. Releases should happen from 'master' and not '$branch_name'."
+#    echo "ctrl-c to quit, any key to continue."
+#    # failure to read input within timeout causes script to exit with error code 142 rather than wait indefinitely
+#    timeout=10 # seconds
+#    read -t $timeout
+#fi
 
 echo "--- building"
 rm -rf ./release-venv/ dist/ build/ *.egg-info
