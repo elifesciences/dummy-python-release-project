@@ -52,8 +52,10 @@ package_name=$(python3 setup.py --name)
 # "elife-dummy-python-release-project (0.0.1)                      - A small example package"  =>  "(0.0.1)"
 remote_version=$(pip search "$package_name" --index "$pypi_url" --isolated | grep "$package_name" | awk '{ print $2 }')
 if [ "$local_version" = "$remote_version" ]; then
-    echo "Local version $local_version is the same as the remote version $remote_version. Not releasing."
+    echo "Local version '$local_version' is the same as the remote version '$remote_version'. Not releasing."
     exit 0 # not a failure case
+else
+    echo "Local version '$local_version' not found remotely, releasing."
 fi
 
 echo "--- uploading"

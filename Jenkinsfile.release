@@ -4,8 +4,12 @@ elifePipeline {
         checkout scm master
     }
     
-    stage 'Release', {
+    stage 'Sandbox release', {
         elifePypiRelease 'test'
+    }
+    
+    stage 'Release', {
+        elifePypiRelease
     }
 }
 
