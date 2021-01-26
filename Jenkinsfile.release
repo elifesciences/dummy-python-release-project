@@ -1,15 +1,21 @@
 elifePipeline {
 
-    stage 'Checkout', {
-        checkout scm master
-    }
+    stages {
+
+        stage 'Checkout', {
+            checkout scm master
+        }
+        
+        stage 'Release', {
+            elifePypiRelease
+        }
+        
+        stage 'Sandbox release', {
+            elifePypiRelease 'test'
+        }
+        
+
     
-    stage 'Sandbox release', {
-        elifePypiRelease 'test'
-    }
-    
-    stage 'Release', {
-        elifePypiRelease
     }
 }
 
