@@ -1,4 +1,4 @@
-elifeLibrary {
+elifePipeline {
     stage 'Checkout', {
         checkout scm
     }
