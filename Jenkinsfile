@@ -22,5 +22,9 @@ elifePipeline {
         stage 'Master', {
             elifeGitMoveToBranch elifeGitRevision(), 'master'
         }
+
+        stage 'Downstream', {
+            build job: '../release/release-dummy-python-release-project', wait: false
+        }
     }
 }
