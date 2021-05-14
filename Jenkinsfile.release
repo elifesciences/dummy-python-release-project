@@ -10,7 +10,6 @@ elifePipeline {
     
     stage 'Release', {
         tag = elifePypiRelease()
-        revision = elifeGitRevision()
-        elifeGitTagRevision(tag, revision)
+        elifeGitTagRevision(tag)
     }
 }
